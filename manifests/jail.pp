@@ -13,6 +13,11 @@ define fail2ban::jail(
   $content = undef,
   $source = undef
 ){
+  include fail2ban
+  
+  if ! $::fail2ban::manage_jails {
+    fail('Managing jails was disabled')
+  }
 
   if $maxretry != undef {
     validate_integer($maxretry)
@@ -26,8 +31,9 @@ define fail2ban::jail(
     validate_integer($findtime)
   }
 
-  include fail2ban
-  contain(Fail2ban::Filter[$filter])
+  if $::fail2ban::manage_filters {
+    contain(Fail2ban::Filter[$filter])
+  }
   
   $jail_conf = "${::fail2ban::jail_d_dir}/${name}.conf"
   

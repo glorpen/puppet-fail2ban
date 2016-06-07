@@ -1,14 +1,21 @@
+# function can be disabled
+# function can be replaced
 class fail2ban(
   $ensure = present,
   $package_ensure = true,
   $manage_firewall = $::fail2ban::manage_firewall,
-  $loglevel = 'ERROR',
-  $logtarget = 'STDERR',
-  $syslogsocket = 'auto',
+  $manage_actions = true,
+  $manage_filters = true,
+  $manage_jails = true,
+  $manage_conf = true,
+  
+  $log_level = 'ERROR',
+  $log_target = 'STDERR',
+  $syslog_socket = $::fail2ban::params::syslog_socket,
   $socket = $::fail2ban::socket,
-  $pidfile = $::fail2ban::pidfile,
-  $dbfile = $::fail2ban::dbfile,
-  $dbpurgeage = 86400,
+  $pid_file = $::fail2ban::pid_file,
+  $db_file = $::fail2ban::db_file,
+  $db_purge_age = 86400,
   
   $jail_d_dir     = $::fail2ban::jail_d_dir,
   $filter_d_dir   = $::fail2ban::filter_d_dir,
@@ -18,20 +25,20 @@ class fail2ban(
   $jail_conf_file = $::fail2ban::jail_conf_file
 ){
 
-  if not ( $loglevel in ['CRITICAL','ERROR','WARNING','NOTICE','INFO','DEBUG'] ){
+  if not ( $log_level in ['CRITICAL','ERROR','WARNING','NOTICE','INFO','DEBUG'] ){
     fail("Unsupported loglevel value ${loglevel}")
   }
   
-  if not ( $logtarget in ['STDOUT', 'STDERR', 'SYSLOG'] ){
-    validate_absolute_path($loglevel, "Unsupported log value ${loglevel}")
+  if not ( $log_target in ['STDOUT', 'STDERR', 'SYSLOG'] ){
+    validate_absolute_path($log_target, "Unsupported log value ${loglevel}")
   }
   
   if not ( $dbfile in ['None', ':memory:'] ){
     validate_absolute_path($dbfile, "Unsupported database path ${dbfile}")
   }
   
-  if $syslogsocket != 'auto' {
-    validate_absolute_path($syslogsocket, "Unsupported syslogsocket value ${$syslogsocket}")
+  if $syslog_socket != 'auto' {
+    validate_absolute_path($syslog_socket, "Unsupported syslogsocket value ${$syslog_socket}")
   }
   
   validate_absolute_path($socket)
@@ -43,46 +50,54 @@ class fail2ban(
     }~>File[$conf_file]
   }
   
-  file { $conf_file:
-    ensure => $ensure,
-    mode => 'u=rw,go=r',
-    content => epp('modules/fail2ban/fail2ban.conf.epp', {
-      'loglevel' => $loglevel,
-      'logtarget' => $logtarget,
-      'syslogsocket' => $syslogsocket,
-      'socket' => $socket,
-      'pidfile' => $pidfile,
-      'dbfile' => $dbfile,
-      'dbpurgeage' => $dbpurgeage,
-    })
+  if $manage_conf {
+	  file { $conf_file:
+	    ensure => $ensure,
+	    mode => 'u=rw,go=r',
+	    content => epp('modules/fail2ban/fail2ban.conf.epp', {
+	      'loglevel' => $log_level,
+	      'logtarget' => $log_target,
+	      'syslogsocket' => $syslog_socket,
+	      'socket' => $socket,
+	      'pidfile' => $pid_file,
+	      'dbfile' => $db_file,
+	      'dbpurgeage' => $db_purge_age,
+	    })
+	  }
+	  
+    file { $conf_d_dir:
+	    ensure => 'directory',
+	    recurse => true,
+	    force => true,
+	    ensure => $ensure
+	  }
   }
   
-  file { $jail_d_dir:
-    ensure => 'directory',
-    recurse => true,
-    force => true,
-    ensure => $ensure
+  if $manage_jails {
+	  file { $jail_d_dir:
+	    ensure => 'directory',
+	    recurse => true,
+	    force => true,
+	    ensure => $ensure
+	  }
   }
   
-  file { $conf_d_dir:
-    ensure => 'directory',
-    recurse => true,
-    force => true,
-    ensure => $ensure
+  if $manage_actions {
+	  file { $action_d_dir:
+	    ensure => 'directory',
+	    recurse => true,
+	    force => true,
+	    ensure => $ensure
+	  }
   }
   
-  file { $action_d_dir:
-    ensure => 'directory',
-    recurse => true,
-    force => true,
-    ensure => $ensure
-  }
-  
-  file { $filter_d_dir:
-    ensure => 'directory',
-    recurse => true,
-    force => true,
-    ensure => $ensure
+  if $manage_filters {
+	  file { $filter_d_dir:
+	    ensure => 'directory',
+	    recurse => true,
+	    force => true,
+	    ensure => $ensure
+	  }
   }
 
 }
