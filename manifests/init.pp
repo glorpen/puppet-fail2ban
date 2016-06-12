@@ -27,6 +27,7 @@ class fail2ban(
   $db_purge_age = 86400,
   $use_main_conf = true,
   
+  $conf_dir       = $::fail2ban::params::conf_dir,
   $jail_d_dir     = $::fail2ban::params::jail_d_dir,
   $filter_d_dir   = $::fail2ban::params::filter_d_dir,
   $action_d_dir   = $::fail2ban::params::action_d_dir,
@@ -48,6 +49,14 @@ class fail2ban(
   }
   
   if $manage_conf {
+  
+    file { $conf_dir:
+      ensure  => $ensure_dir,
+      recurse => true,
+      force   => true,
+      purge   => true,
+    }
+  
     if $use_main_conf {
   
 	    fail2ban::validate_options(

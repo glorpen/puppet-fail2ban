@@ -1,4 +1,5 @@
 class fail2ban::params{
+  $conf_dir        = '/etc/fail2ban'
   $jail_d_dir      = '/etc/fail2ban/jail.d'
   $filter_d_dir    = '/etc/fail2ban/filter.d'
   $action_d_dir    = '/etc/fail2ban/action.d'
