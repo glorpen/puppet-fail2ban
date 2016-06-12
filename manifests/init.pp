@@ -36,6 +36,7 @@ class fail2ban(
   $jail_conf_file = $::fail2ban::params::jail_conf_file,
   
   $add_builtin_filters = true,
+  $add_builtin_actions = true,
   
 ) inherits fail2ban::params {
 
@@ -112,6 +113,10 @@ class fail2ban(
 	    force => true,
 	    purge => true
 	  }
+	  
+	  if $add_builtin_actions {
+      include fail2ban::builtin::actions
+    }
   }
   
   if $manage_filters {
