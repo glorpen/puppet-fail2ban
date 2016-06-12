@@ -33,7 +33,10 @@ class fail2ban(
   $action_d_dir   = $::fail2ban::params::action_d_dir,
   $conf_d_dir     = $::fail2ban::params::conf_d_dir,
   $conf_file      = $::fail2ban::params::conf_file,
-  $jail_conf_file = $::fail2ban::params::jail_conf_file
+  $jail_conf_file = $::fail2ban::params::jail_conf_file,
+  
+  $add_builtin_filters = true,
+  
 ) inherits fail2ban::params {
 
   $ensure_dir = $ensure ? {
@@ -49,7 +52,6 @@ class fail2ban(
   }
   
   if $manage_conf {
-  
     file { $conf_dir:
       ensure  => $ensure_dir,
       recurse => true,
@@ -58,7 +60,6 @@ class fail2ban(
     }
   
     if $use_main_conf {
-  
 	    fail2ban::validate_options(
 	     $log_level,
 	     $log_target,
@@ -117,6 +118,10 @@ class fail2ban(
 	    recurse => true,
 	    force => true,
 	    purge => true
+	  }
+	  
+	  if $add_builtin_filters {
+		  include fail2ban::builtin::filters
 	  }
   }
 

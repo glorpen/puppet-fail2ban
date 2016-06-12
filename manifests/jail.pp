@@ -39,7 +39,7 @@ define fail2ban::jail(
   
   if ! $content and ! $source {
   
-	  $config = merge({
+	  $config = delete_undef_values(merge({
 	    'enabled' => $enabled? {
 	      true => 'true',
 	      default => 'false'
@@ -55,20 +55,18 @@ define fail2ban::jail(
 	    'findtime' => $findtime,
 	    'action' => $action,
 	    'filter' => $filter
-	  }, $conf)
+	  }, $conf))
 	  
 	  file { $jail_conf:
 	    owner => 'root',
 	    filter => $filter,
-	    content => epp('modules/fail2ban/entry.epp',{
-	      'title' => $title,
-	      'config' => $config
+	    content => epp('fail2ban/entry.epp',{
+	      'sections' => {'Definition' =>  $config}
 	    })
 	  }
   } else {
     file { $jail_conf:
       owner => 'root',
-      filter => $filter,
       content => $content,
       source => $source
     }

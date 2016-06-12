@@ -1,6 +1,0 @@
-[<%= $title %>]
-<% $config.each | key, value | { %>
-    <%= key %> = <% [value].flatten.each | v | %>
-        <%= v -%>
-    <% } -%>
-<% } %>

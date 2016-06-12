@@ -1,0 +1,8 @@
+<% $sections.each | section_name, section_items | { %>
+[<%= section_name %>]
+<% section_items.each | key, value | { %>
+    <%= key %> = <% [value].flatten.each | v | %>
+        <%= v -%>
+    <% } -%>
+<% } %>
+<% } %>
