@@ -15,6 +15,16 @@ define fail2ban::conf(
     fail('Managing config was disabled')
   }
   
+  fail2ban::validate_options(
+     $log_level,
+     $log_target,
+     $syslog_socket,
+     $socket,
+     $pid_file,
+     $db_file,
+     $db_purge_age
+  )
+  
   $conf_file = "${::fail2ban::conf_d_dir}/${title}.conf"
 
   file { $conf_file:
