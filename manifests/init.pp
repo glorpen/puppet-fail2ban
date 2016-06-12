@@ -139,5 +139,17 @@ class fail2ban(
 		  include fail2ban::builtin::ignorecommands
 	  }
   }
+  
+  if $manage_firewall {
+    firewall::ignore { 'f2b ipv4 rules':
+	    regex => [' -j f2b-'],
+	    chain => 'INPUT:filter:IPv4'
+	  }
+	  
+	  firewall::ignore { 'f2b ipv6 rules':
+      regex => [' -j f2b-'],
+      chain => 'INPUT:filter:IPv6'
+    }
+  }
 
 }
