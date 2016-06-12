@@ -39,6 +39,8 @@ class fail2ban(
   
 ) inherits fail2ban::params {
 
+  $filter_ignorecmd_d = "${filter_d_dir}/ignorecommands"
+
   $ensure_dir = $ensure ? {
     present => 'directory',
     default => absent
@@ -120,8 +122,16 @@ class fail2ban(
 	    purge => true
 	  }
 	  
+	  file { $filter_ignorecmd_d:
+	    ensure => $::fail2ban::ensure_dir,
+	    recurse => true,
+	    force => true,
+	    purge => true
+	  }
+	  
 	  if $add_builtin_filters {
 		  include fail2ban::builtin::filters
+		  include fail2ban::builtin::ignorecommands
 	  }
   }
 
