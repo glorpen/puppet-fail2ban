@@ -33,7 +33,7 @@ class fail2ban(
   $conf_d_dir     = $::fail2ban::params::conf_d_dir,
   $conf_file      = $::fail2ban::params::conf_file,
   $jail_conf_file = $::fail2ban::params::jail_conf_file
-){
+) inherits fail2ban::params {
 
   package { $package_name:
     ensure => $ensure ? {
