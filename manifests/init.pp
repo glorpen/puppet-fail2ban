@@ -11,7 +11,7 @@
 class fail2ban(
   $ensure = present,
   $package_ensure = present,
-  $manage_firewall = $::fail2ban::manage_firewall,
+  $manage_firewall = $::fail2ban::params::manage_firewall,
   $manage_actions = true,
   $manage_filters = true,
   $manage_jails = true,
@@ -20,18 +20,18 @@ class fail2ban(
   $log_level = 'ERROR',
   $log_target = 'STDERR',
   $syslog_socket = $::fail2ban::params::syslog_socket,
-  $socket = $::fail2ban::socket,
-  $pid_file = $::fail2ban::pid_file,
-  $db_file = $::fail2ban::db_file,
+  $socket = $::fail2ban::params::socket,
+  $pid_file = $::fail2ban::params::pid_file,
+  $db_file = $::fail2ban::params::db_file,
   $db_purge_age = 86400,
   $use_main_conf = true,
   
-  $jail_d_dir     = $::fail2ban::jail_d_dir,
-  $filter_d_dir   = $::fail2ban::filter_d_dir,
-  $action_d_dir   = $::fail2ban::action_d_dir,
-  $conf_d_dir     = $::fail2ban::conf_d_dir,
-  $conf_file      = $::fail2ban::conf_file,
-  $jail_conf_file = $::fail2ban::jail_conf_file
+  $jail_d_dir     = $::fail2ban::params::jail_d_dir,
+  $filter_d_dir   = $::fail2ban::params::filter_d_dir,
+  $action_d_dir   = $::fail2ban::params::action_d_dir,
+  $conf_d_dir     = $::fail2ban::params::conf_d_dir,
+  $conf_file      = $::fail2ban::params::conf_file,
+  $jail_conf_file = $::fail2ban::params::jail_conf_file
 ){
   if $package_ensure != undef {
     package { 'fail2ban':
