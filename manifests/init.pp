@@ -58,7 +58,7 @@ class fail2ban(
 		  file { $conf_file:
 		    ensure => $ensure,
 		    mode => 'u=rw,go=r',
-		    content => epp('modules/fail2ban/fail2ban.conf.epp', {
+		    content => epp('fail2ban/fail2ban.conf.epp', {
 		      'loglevel' => $log_level,
 		      'logtarget' => $log_target,
 		      'syslogsocket' => $syslog_socket,

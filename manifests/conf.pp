@@ -29,7 +29,7 @@ define fail2ban::conf(
 
   file { $conf_file:
     mode => 'u=rw,go=r',
-    content => epp('modules/fail2ban/entry.epp',{
+    content => epp('fail2ban/entry.epp',{
       'title' => 'Definition',
       'config' => merge(delete_undef_values({
         'loglevel' => $log_level,
