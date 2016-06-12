@@ -80,6 +80,7 @@ class fail2ban(
 	    ensure => $ensure_dir,
 	    recurse => true,
 	    force => true,
+	    purge => true
 	  }
   }
   
@@ -88,6 +89,7 @@ class fail2ban(
 	    ensure => $ensure_dir,
 	    recurse => true,
 	    force => true,
+	    purge => true
 	  }
   }
   
@@ -96,6 +98,7 @@ class fail2ban(
 	    ensure => $ensure_dir,
 	    recurse => true,
 	    force => true,
+	    purge => true
 	  }
   }
   
@@ -104,6 +107,7 @@ class fail2ban(
 	    ensure => $ensure_dir,
 	    recurse => true,
 	    force => true,
+	    purge => true
 	  }
   }
 
