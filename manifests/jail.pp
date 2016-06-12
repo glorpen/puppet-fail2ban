@@ -60,7 +60,6 @@ define fail2ban::jail(
 	  
 	  file { $jail_conf:
 	    owner => 'root',
-	    filter => $filter,
 	    content => epp('fail2ban/sections.epp',{
 	      'sections' => {'Definition' =>  $config}
 	    })
@@ -76,7 +75,6 @@ define fail2ban::jail(
   if $::fail2ban::manage_firewall {
 	  firewallchain { "f2b-${title}:filter:IPv4":
 	    ensure => $::fail2ban::ensure,
-	    policy => return,
 	    purge  => false
 	  }
   }
