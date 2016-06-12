@@ -1,7 +1,7 @@
 class fail2ban::params{
   $jail_d_dir      = '/etc/fail2ban/jail.d'
   $filter_d_dir    = '/etc/fail2ban/filter.d'
-  $action_d_dir    = '/etc/fail2ban/filter.d'
+  $action_d_dir    = '/etc/fail2ban/action.d'
   $conf_d_dir      = '/etc/fail2ban/fail2ban.d'
   $socket          = '/run/fail2ban/fail2ban.sock'
   $syslog_socket   = 'auto'
