@@ -11,6 +11,7 @@
 class fail2ban(
   $ensure = present,
   $package_ensure = present,
+  $package_name = $::fail2ban::params::package_name,
   $manage_firewall = $::fail2ban::params::manage_firewall,
   $manage_actions = true,
   $manage_filters = true,
@@ -33,17 +34,15 @@ class fail2ban(
   $conf_file      = $::fail2ban::params::conf_file,
   $jail_conf_file = $::fail2ban::params::jail_conf_file
 ){
-  if $package_ensure != undef {
-    package { 'fail2ban':
-      ensure => $ensure ? {
-        present => $package_ensure,
-        default => absent
-      }
-    }~>File[$conf_file]
+
+  package { $package_name:
+    ensure => $ensure ? {
+      present => $package_ensure,
+      default => absent
+    }
   }
   
   if $manage_conf {
-  
     if $use_main_conf {
   
 	    fail2ban::validate_options(
@@ -67,7 +66,8 @@ class fail2ban(
 		      'pidfile' => $pid_file,
 		      'dbfile' => $db_file,
 		      'dbpurgeage' => $db_purge_age,
-		    })
+		    }),
+		    subscribe => Package[$package_name]
 		  }
 	  }
 	  
