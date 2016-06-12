@@ -32,7 +32,8 @@ define fail2ban::jail(
   }
 
   if $::fail2ban::manage_filters {
-    contain(Fail2ban::Filter[$filter])
+    Fail2ban::Filter[$filter]
+    ->Fail2ban::Jail[$name]
   }
   
   $jail_conf = "${::fail2ban::jail_d_dir}/${name}.conf"
@@ -60,7 +61,7 @@ define fail2ban::jail(
 	  file { $jail_conf:
 	    owner => 'root',
 	    filter => $filter,
-	    content => epp('fail2ban/entry.epp',{
+	    content => epp('fail2ban/sections.epp',{
 	      'sections' => {'Definition' =>  $config}
 	    })
 	  }
@@ -70,5 +71,13 @@ define fail2ban::jail(
       content => $content,
       source => $source
     }
+  }
+  
+  if $::fail2ban::manage_firewall {
+	  firewallchain { "f2b-${title}:filter:IPv4":
+	    ensure => $::fail2ban::ensure,
+	    policy => return,
+	    purge  => false
+	  }
   }
 }
