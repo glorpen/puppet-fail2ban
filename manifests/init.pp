@@ -35,6 +35,11 @@ class fail2ban(
   $jail_conf_file = $::fail2ban::params::jail_conf_file
 ) inherits fail2ban::params {
 
+  $ensure_dir = $ensure ? {
+    present => 'directory',
+    default => absent
+  }
+
   package { $package_name:
     ensure => $ensure ? {
       present => $package_ensure,
@@ -72,37 +77,33 @@ class fail2ban(
 	  }
 	  
     file { $conf_d_dir:
-	    ensure => 'directory',
+	    ensure => $ensure_dir,
 	    recurse => true,
 	    force => true,
-	    ensure => $ensure
 	  }
   }
   
   if $manage_jails {
 	  file { $jail_d_dir:
-	    ensure => 'directory',
+	    ensure => $ensure_dir,
 	    recurse => true,
 	    force => true,
-	    ensure => $ensure
 	  }
   }
   
   if $manage_actions {
 	  file { $action_d_dir:
-	    ensure => 'directory',
+	    ensure => $ensure_dir,
 	    recurse => true,
 	    force => true,
-	    ensure => $ensure
 	  }
   }
   
   if $manage_filters {
 	  file { $filter_d_dir:
-	    ensure => 'directory',
+	    ensure => $ensure_dir,
 	    recurse => true,
 	    force => true,
-	    ensure => $ensure
 	  }
   }
 
