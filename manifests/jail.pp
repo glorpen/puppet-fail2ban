@@ -1,13 +1,21 @@
 define fail2ban::jail(
-  $filter = $name,
   $enabled = true,
-  $port = undef,
-  $logpath = undef,
-  $maxretry = undef,
-  $bantime = undef,
-  $banaction = undef,
-  $findtime = undef,
+  $port = '0:65535',
+  $protocol = 'tcp',
+  $log_path = undef,
+  $max_retry = 5,
+  $ban_time = 600,
+  $ban_action = 'iptables-multiport',
+  $find_time = 600,
   $action = undef,
+  $filter = $name,
+  $chain = 'INPUT',
+  
+  $backend = 'auto',
+  $use_dns = 'warn',
+  $log_encoding = 'auto',
+  $ignore_ip = '127.0.0.1/8',
+  
   $conf = {},
   
   $content = undef,
@@ -19,17 +27,10 @@ define fail2ban::jail(
     fail('Managing jails was disabled')
   }
 
-  if $maxretry != undef {
-    validate_integer($maxretry)
-  }
-  
-  if $bantime != undef {
-    validate_integer($bantime)
-  }
-  
-  if $findtime != undef {
-    validate_integer($findtime)
-  }
+  validate_integer($max_retry)
+  validate_integer($ban_time)
+  validate_integer($find_time)
+  #TODO validation
 
   if $::fail2ban::manage_filters {
     Fail2ban::Filter[$filter]
@@ -39,29 +40,34 @@ define fail2ban::jail(
   $jail_conf = "${::fail2ban::jail_d_dir}/${name}.conf"
   
   if ! $content and ! $source {
+    $norm_port = $port ? {
+      undef => undef,
+      default => join(flatten([$port]), ',')
+    }
   
-	  $config = delete_undef_values(merge({
+	  $config = merge($conf, {
 	    'enabled' => $enabled? {
 	      true => 'true',
 	      default => 'false'
 	    },
-	    'port' => $port ? {
-	      undef => undef,
-	      default => join(flatten([$port]), ',')
+	    'logpath' => $log_path,
+	    'maxretry' => $max_retry,
+	    'findtime' => $find_time,
+	    'action' => $action? {
+	      undef => "${ban_action}[name=${name}, bantime=\"${ban_time}\", port=\"${norm_port}\", protocol=\"${protocol}\", chain=\"${chain}\"]",
+        default => $action
 	    },
-	    'logpath' => $logpath,
-	    'maxretry' => $maxretry,
-	    'bantime' => $bantime,
-	    'banaction' => $banaction,
-	    'findtime' => $findtime,
-	    'action' => $action,
 	    'filter' => $filter
-	  }, $conf))
+	    'backend' => $backend,
+	    'usedns' => $use_dns,
+	    'logencoding' => $log_encoding,
+	    'ignoreip' => $ignore_ip
+	  })
 	  
 	  file { $jail_conf:
 	    owner => 'root',
 	    content => epp('fail2ban/sections.epp',{
-	      'sections' => {$name =>  $config}
+	      'sections' => {$name => $config}
 	    })
 	  }
   } else {
