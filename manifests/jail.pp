@@ -61,7 +61,7 @@ define fail2ban::jail(
 	  file { $jail_conf:
 	    owner => 'root',
 	    content => epp('fail2ban/sections.epp',{
-	      'sections' => {'Definition' =>  $config}
+	      'sections' => {$name =>  $config}
 	    })
 	  }
   } else {
