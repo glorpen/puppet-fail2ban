@@ -1,8 +1,8 @@
-<% $sections.each | section_name, section_items | { %>
-[<%= section_name %>]
-<% section_items.each | key, value | { %>
-    <%= key %> = <% [value].flatten.each | v | %>
-        <%= v -%>
-    <% } -%>
-<% } %>
+<% $sections.each | $section_name, $section_items | { -%>
+[<%= $section_name %>]
+<% $section_items.each | $key, $value | { -%>
+<%= $key %> = <% [$value].flatten.each | $k, $v | { -%>
+<%- if $k > 0 { %>    <% } -%>
+<%= $v %>
+<%- } } %>
 <% } %>
