@@ -57,7 +57,7 @@ define fail2ban::jail(
 	      undef => "${ban_action}[name=${name}, bantime=\"${ban_time}\", port=\"${norm_port}\", protocol=\"${protocol}\", chain=\"${chain}\"]",
         default => $action
 	    },
-	    'filter' => $filter
+	    'filter' => $filter,
 	    'backend' => $backend,
 	    'usedns' => $use_dns,
 	    'logencoding' => $log_encoding,
