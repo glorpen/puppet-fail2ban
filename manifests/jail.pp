@@ -83,13 +83,5 @@ define fail2ban::jail(
 	    ensure => $::fail2ban::ensure,
 	    purge  => false
 	  }
-	  if defined( "firewall::ignore") {
-	    firewall::ignore { "fail2ban-jail-${name}":
-        chain => 'INPUT:filter:IPv4',
-        regex => "^-A f2b-${name}"
-	    }
-	  } else {
-	    warn('Your firewall module does not support adding ignore rules')
-	  }
   }
 }

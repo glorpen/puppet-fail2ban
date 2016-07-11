@@ -141,15 +141,18 @@ class fail2ban(
   }
   
   if $manage_firewall {
-    firewall::ignore { 'f2b ipv4 rules':
-	    regex => [' -j f2b-'],
-	    chain => 'INPUT:filter:IPv4'
-	  }
-	  
-	  firewall::ignore { 'f2b ipv6 rules':
-      regex => [' -j f2b-'],
-      chain => 'INPUT:filter:IPv6'
+    if defined( "firewall::ignore") {
+	    firewall::ignore { 'f2b ipv4 rules':
+		    regex => [' -j f2b-'],
+		    chain => 'INPUT:filter:IPv4'
+		  }
+		  
+		  firewall::ignore { 'f2b ipv6 rules':
+	      regex => [' -j f2b-'],
+	      chain => 'INPUT:filter:IPv6'
+	    }
+    } else {
+      warn('Your firewall module does not support adding ignore rules')
     }
   }
-
 }
