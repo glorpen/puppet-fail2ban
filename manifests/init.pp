@@ -24,6 +24,7 @@ class fail2ban(
   $socket = $::fail2ban::params::socket,
   $pid_file = $::fail2ban::params::pid_file,
   $db_file = $::fail2ban::params::db_file,
+  $service_name = $::fail2ban::params::service_name,
   $db_purge_age = 86400,
   $use_main_conf = true,
   
@@ -52,6 +53,10 @@ class fail2ban(
       present => $package_ensure,
       default => absent
     }
+  }~>
+  service { $service_name:
+    ensure => running,
+    enable => true
   }
   
   if $manage_conf {

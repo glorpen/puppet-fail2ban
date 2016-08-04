@@ -22,13 +22,15 @@ define fail2ban::filter(
       filter => $filter,
       content => epp('fail2ban/sections.epp',{
         'sections' => {'Definition' =>  $config}
-      })
+      }),
+      notify => [Service[$::fail2ban::service_name]]
     }
   } else {
 	  file { $filter_conf:
 	    owner => 'root',
 	    content => $content,
-	    source => $source
+	    source => $source,
+	    notify => [Service[$::fail2ban::service_name]]
 	  }
   }
 

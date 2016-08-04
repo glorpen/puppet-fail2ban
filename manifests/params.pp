@@ -12,4 +12,5 @@ class fail2ban::params{
   $conf_file       = '/etc/fail2ban/fail2ban.conf'
   $jail_conf_file  = '/etc/fail2ban/jail.conf'
   $package_name    = 'fail2ban'
+  $service_name    = 'fail2ban'
 }

@@ -40,6 +40,7 @@ define fail2ban::conf(
 	      'dbfile' => $db_file,
 	      'dbpurgeage' => $db_purge_age,
       }), $custom)
-    })
+    }),
+    notify => [Service[$::fail2ban::service_name]]
   }
 }

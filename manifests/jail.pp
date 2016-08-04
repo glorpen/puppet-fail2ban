@@ -68,13 +68,15 @@ define fail2ban::jail(
 	    owner => 'root',
 	    content => epp('fail2ban/sections.epp',{
 	      'sections' => {$name => $config}
-	    })
+	    }),
+      notify => [Service[$::fail2ban::service_name]]
 	  }
   } else {
     file { $jail_conf:
       owner => 'root',
       content => $content,
-      source => $source
+      source => $source,
+      notify => [Service[$::fail2ban::service_name]]
     }
   }
   

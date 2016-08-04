@@ -16,7 +16,7 @@ define fail2ban::action(
   
   file { "${::fail2ban::action_d_dir}/${conf_name}":
     source => $source,
-    content => $content
+    content => $content,
+    notify => [Service[$::fail2ban::service_name]]
   }
-  
 }
