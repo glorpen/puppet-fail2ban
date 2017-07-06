@@ -8,7 +8,7 @@ class fail2ban::params{
   $syslog_socket   = 'auto'
   $pid_file        = '/run/fail2ban/fail2ban.pid'
   $db_file         = '/var/lib/fail2ban/fail2ban.sqlite3'
-  $manage_firewall = defined('firewall')
+  $manage_firewall = defined('g_firewall')
   $conf_file       = '/etc/fail2ban/fail2ban.conf'
   $jail_conf_file  = '/etc/fail2ban/jail.conf'
   $package_name    = 'fail2ban'

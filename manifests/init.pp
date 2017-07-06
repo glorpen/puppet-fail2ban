@@ -53,7 +53,7 @@ class fail2ban(
       present => $package_ensure,
       default => absent
     }
-  }~>
+  }->
   service { $service_name:
     ensure => running,
     enable => true
