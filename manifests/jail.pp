@@ -1,12 +1,12 @@
 define fail2ban::jail(
-  $enabled = true,
+  Enum['present', 'absent', 'disabled'] $ensure = 'present',
   $port = '0:65535',
   $protocol = 'tcp',
   $log_path = undef,
-  $max_retry = 5,
-  $ban_time = 600,
+  Integer $max_retry = 5,
+  Integer $ban_time = 600,
   $ban_action = 'iptables-multiport',
-  $find_time = 600,
+  Integer $find_time = 600,
   $action = undef,
   $filter = $name,
   $chain = 'INPUT',
@@ -15,6 +15,9 @@ define fail2ban::jail(
   $use_dns = 'warn',
   $log_encoding = 'auto',
   $ignore_ip = '127.0.0.1/8',
+
+  $ignore_command = undef,
+  String $ignore_command_args = '',
   
   $conf = {},
   
@@ -23,17 +26,18 @@ define fail2ban::jail(
 ){
   include fail2ban
   
-  if ! $::fail2ban::manage_jails {
-    fail('Managing jails was disabled')
+  $ensure_file = $ensure ? {
+    'absent' => 'absent',
+    default => 'present'
   }
 
-  validate_integer($max_retry)
-  validate_integer($ban_time)
-  validate_integer($find_time)
-  #TODO validation
-
-  if $::fail2ban::manage_filters {
+  if (defined(Fail2ban::Filter[$filter])) {
     Fail2ban::Filter[$filter]
+    ->Fail2ban::Jail[$name]
+  }
+
+  if ($ignore_command && defined(Fail2ban::Ignorecommand[$ignore_command])) {
+    Fail2ban::Ignorecommand[$ignore_command]
     ->Fail2ban::Jail[$name]
   }
   
@@ -46,8 +50,8 @@ define fail2ban::jail(
     }
   
 	  $config = merge($conf, {
-	    'enabled' => $enabled? {
-	      true => 'true',
+	    'enabled' => $ensure? {
+	      'present' => 'true',
 	      default => 'false'
 	    },
 	    'logpath' => $log_path,
@@ -61,10 +65,15 @@ define fail2ban::jail(
 	    'backend' => $backend,
 	    'usedns' => $use_dns,
 	    'logencoding' => $log_encoding,
-	    'ignoreip' => $ignore_ip
+	    'ignoreip' => $ignore_ip,
+      'ignorecommand' => $ignore_command?{
+        undef => undef,
+        default => "${ignore_command} ${ignore_command_args}"
+      }
 	  })
 	  
 	  file { $jail_conf:
+      ensure => $ensure_file
 	    owner => 'root',
 	    content => epp('fail2ban/sections.epp',{
 	      'sections' => {$name => $config}
@@ -73,6 +82,7 @@ define fail2ban::jail(
 	  }
   } else {
     file { $jail_conf:
+      ensure => $ensure_file,
       owner => 'root',
       content => $content,
       source => $source,
@@ -80,6 +90,7 @@ define fail2ban::jail(
     }
   }
   
+  # $ban_action ~= ^iptables-
   if $::fail2ban::manage_firewall {
 	  firewallchain { "f2b-${title}:filter:IPv4":
 	    ensure => $::fail2ban::ensure,

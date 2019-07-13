@@ -1,9 +1,9 @@
 class fail2ban::jail::sshd(
   $ban_time = 3600,
   $find_time = 1200,
-  $log_path = $::fail2ban::common_paths::syslog_authpriv,
+  $log_path = undef,
   $conf = {}
-) inherits fail2ban::common_paths {
+) {
   fail2ban::jail{'sshd':
     port    => 'ssh',
     ban_time => $ban_time,
