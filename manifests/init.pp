@@ -10,8 +10,8 @@
 #
 class fail2ban(
   Variant[Enum['present', 'absent'], String] $ensure = 'present',
-  $package_name = 'fail2ban',
-  $manage_firewall = true,
+  String $package_name = 'fail2ban',
+  Boolean $manage_firewall = true,
   Enum['CRITICAL','ERROR','WARNING','NOTICE','INFO','DEBUG'] $log_level = 'ERROR',
   Variant[Enum['STDOUT', 'STDERR', 'SYSLOG'], Stdlib::Absolutepath] $log_target = 'STDERR',
   Variant[Enum['auto'], Stdlib::Absolutepath, Undef] $syslog_socket = undef,
@@ -24,7 +24,7 @@ class fail2ban(
 	String $jail_d_dir = 'jail.d',
 	String $action_d_dir = 'action.d',
 	String $filter_d_dir = 'filter.d',
-	Hash[String, Variant[String, Array[String]]] $jail_defaults = {}
+	Hash[String, Fail2ban::Multiline] $jail_defaults = {}
 ) {
 
 	$jail_d_path = "${config_path}/${jail_d_dir}"
